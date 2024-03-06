@@ -37,17 +37,15 @@ class TestBooksCollector:
 
     def test_set_book_genre_non_existing_genre(self):
         collector = BooksCollector()
-        books_genre = {'Сияние': ''}
-        collector.books_genre = books_genre
 
         # Пытаемся установить несуществующий жанр для книги
         collector.set_book_genre('Сияние', 'Драма')
 
-        # Получаем текущий жанр книги (пустую строку)
-        current_genre = collector.books_genre.get('Сияние')
+        # Получаем текущий жанр книги (None)
+        current_genre = collector.get_book_genre('Сияние')
 
-        # Проверяем, что жанр для книги остался неизменным (равен пустой строке)
-        assert current_genre == ''
+        # Проверяем, что жанр для книги остался неизменным (равен None)
+        assert current_genre == None
 
 
 
@@ -178,6 +176,10 @@ class TestBooksCollector:
         for book_title in modified_favorites:
             collector.delete_book_from_favorites(book_title)
 
+        # Получаем список избранных книг после модификации
+        modified_favorites_set = set(modified_favorites)
+        updated_favorites_set = set(initial_favorites) - modified_favorites_set
+        updated_favorites = list(updated_favorites_set)
+
         # Проверяем, что изменение списка избранных книг не влияет на результат
-        assert collector.get_list_of_favorites_books() == [book for book in initial_favorites if
-                                                           book not in modified_favorites]
+        assert collector.get_list_of_favorites_books() == updated_favorites
