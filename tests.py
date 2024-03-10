@@ -53,19 +53,23 @@ class TestBooksCollector:
         'name, expected_genre',
         [
             ('Ветра зимы','Фантастика'),
-            ('Сияние','Ужасы')
+            ('Оно','Ужасы')
         ]
     )
     def test_get_book_genre(self, name, expected_genre):
         collector = BooksCollector()
 
-        books_genre = {
-            'Ветра зимы': 'Фантастика',
-            'Сияние': 'Ужасы'
-        }
+        collector.add_new_book("Ветра зимы")
+        collector.add_new_book("Оно")
 
-        collector.books_genre = books_genre
-        assert collector.get_book_genre(name) == expected_genre
+        # Устанавливаем жанр для книги
+        collector.set_book_genre('Ветра зимы', 'Фантастика')
+        collector.set_book_genre('Оно', 'Ужасы')
+
+        current_genre = collector.get_book_genre(name)
+
+        # Получаем жанр книги и сравниваем его с ожидаемым результатом
+        assert current_genre == expected_genre
 
 
 
@@ -79,29 +83,40 @@ class TestBooksCollector:
     def test_get_books_with_specific_genre(self, genre, expected_books):
         collector = BooksCollector()
 
-        books_genre = {
-            "Гарри Поттер и Тайная комната": "Фантастика",
-            "Оно": "Ужасы"
-        }
+        # Добавляем книги и устанавливаем им жанры
+        collector.add_new_book("Гарри Поттер и Тайная комната")
+        collector.add_new_book("Оно")
+        collector.set_book_genre("Гарри Поттер и Тайная комната", "Фантастика")
+        collector.set_book_genre("Оно", "Ужасы")
 
-        collector.books_genre = books_genre
+        # Получаем список книг с определенным жанром и сравниваем его с ожидаемым результатом
         assert collector.get_books_with_specific_genre(genre) == expected_books
-
-
 
 
     def test_get_books_genre(self):
         collector = BooksCollector()
 
-        books_genre = {
-            'Ветра зимы': 'Фантастика',
-            'Сияние': 'Ужасы',
-            'Пляшущие человечки': 'Детективы'
+        dictionary = {
+            'Гарри Поттер и Философский Камень': 'Фантастика',
+            '1984': 'Ужасы',
+            'Мастер и Маргарита': 'Ужасы'
         }
 
-        collector.books_genre = books_genre
-        result_books_genre = collector.get_books_genre()
-        assert result_books_genre == books_genre
+        # Добавляем несколько книг с их жанрами
+        collector.add_new_book('Гарри Поттер и Философский Камень')
+        collector.set_book_genre('Гарри Поттер и Философский Камень', 'Фантастика')
+
+        collector.add_new_book('1984')
+        collector.set_book_genre('1984', 'Ужасы')
+
+        collector.add_new_book('Мастер и Маргарита')
+        collector.set_book_genre('Мастер и Маргарита', 'Ужасы')
+
+        # Получаем словарь с книгами и их жанрами
+        books_genre = collector.get_books_genre()
+
+        # Проверяем, что словарь содержит ожидаемые значения
+        assert books_genre == dictionary
 
 
 
@@ -110,13 +125,11 @@ class TestBooksCollector:
     def test_get_books_for_children_non_children_book(self):
         collector = BooksCollector()
 
-        books_genre = {'Оно': 'Ужасы'}
-
-        collector.books_genre = books_genre
-
+        collector.add_new_book('1984')
+        collector.set_book_genre('1984', 'Ужасы')
         children_books = collector.get_books_for_children()
 
-        assert 'Оно' not in children_books
+        assert '1984' not in children_books
 
 
 
